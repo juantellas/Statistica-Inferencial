@@ -1,0 +1,66 @@
+---
+title: "Titulo?"
+author: "Integrantes"
+date: "2023-10-06"
+toc: true
+format:
+  html:
+    html-math-method: katex
+    code-tools: true
+    self-contained: true
+execute:
+  warning: false
+---
+
+# Contexto.
+
+Descrición de la base de datos, tamaño de muestra entre otro. 
+
+
+# Descripción de variables estudiadas.
+
+
+# Estimaciones Poblacionales Univariadas.
+
+
+```{r}
+#Importar base de datos
+#library(readxl)
+#datos <- read_excel("nombre de la base.xlsx")
+```
+
+## **Estimación de la Media:**
+
+
+**Intervalos de Confianza**
+
+
+**Pruebas de Hipótesis.**
+
+_Conclusiones de la Media estimada_
+
+## **Estimación de la Proporción:**
+
+**Intervalos de Confianza**
+
+**Pruebas de Hipótesis.**
+
+_Conclusiones de las Proporciónes estimada_
+
+## **Estimación de la Varianza:**
+
+
+**Intervalos de Confianza**
+
+
+**Pruebas de Hipótesis.**
+
+_Conclusiones de la Varianza estimada_
+
+
+
+
+
+
+
+
