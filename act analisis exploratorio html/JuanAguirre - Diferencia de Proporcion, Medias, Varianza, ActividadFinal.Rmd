@@ -1,0 +1,436 @@
+---
+title: "Ejercicio de análisis exploratorio en HTML"
+author: "Juan Aguirre"
+format: pdf_document
+output:
+  html_document:
+    df_print: paged
+editor: visual
+toc: yes
+---
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+Antes de empezar a realizar los ejercicios, vamos a cargar la base de datos en nuestro archivo.
+
+```{r}
+#Antes de empezar, Importar datos
+
+library(openxlsx)
+
+#Usando una ubicacion, leemos los datos
+datos <- read.xlsx("C:\\Users\\LENOVO V14-G2\\Documents\\Statistica Inferencial\\parcial2\\data_uni-Bi.xlsx")
+```
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+# COMPARACION DE PROPORCION
+
+Se quiere estudiar la diferencia de proporcion que hay entre las personas encuestados que tienen mas de 38 años. De este, tenemos que de 26 mujeres, x tienen mas de 38 años. Y tambien de 24 hombres, x tienen mas de 35 años. Con un nivel de significancia del 95%, se puede decir que tienen la misma proporcion?
+
+Se van a evaluar de las sigiuente manera:
+
+-   Regla de decisiones
+
+-   Método grafico
+
+-   P-valor
+
+-   Prueba prop.test en R.
+
+```{r}
+
+#Primero, hacemos una tabla de frecuencias para estimar el numero de hombres y mujeres por edad, y luego el numero que personas que tienen mas de 38 años.
+
+table(datos$Edad, datos$Género)
+
+```
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Regla de decisiones
+
+Primero que todo, estableceremos las hipotes\`\`\`
+
+-   $H_0$ (Hipotesis Nula) = $P1 - P2 \neq 0$ (Las proporciones no son iguales)
+
+-   $H_1$ (Hipotesis Alternativa) = $P1 - P2 = 0$ (Las proporciones son iguales)
+
+Con esto en mente, hallamos la proporcion para las dos muestras:
+
+```{r}
+# Contar el número total de hombres y mujeres
+num_hombres <- sum(datos$Género == "Hombre")
+cat("Número total de hombres:", num_hombres, "\n")
+
+num_mujeres <- sum(datos$Género == "Mujer")
+cat("Número total de mujeres:", num_mujeres, "\n")
+
+
+#poblacion de mujeres
+n1<-26
+
+#poblacion de hombres
+n2<-24
+
+#prop. de mujeres que cumplen con la condicion
+p1<- 15/26
+p1
+
+#prop. de hombres que cumplen con la condicion
+p2<-5/24
+p2
+
+```
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## P-Combinado
+
+Con esto en mente, podemos hallar la probabilidad del p combinado
+
+$$\hat{p}_{\text{combinado}} = \frac{(n_1)(p_1)+(n_2)(p_2)}{(n_1)+(n_2)}$$ En este caso, seria de la siguiente manera:
+
+$$\hat{p}_{\text{combinado}} = \frac{(26)(0.5769231)+(24)(0.2083333)}{26+24} = \frac{19.968}{50} = 0.399$$
+
+Con el p combinado encontrado, pasaremos a hallar el estadistico de prueba.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Estadistico de Prueba
+
+La formula para hallar el estadistico de prueba en una prueba de diferencia de proporciones con dos muestras es la siguiente:
+
+$$Z = \frac{\hat{p}_1 - \hat{p}_2}{\sqrt{\frac{\hat{p}_0\cdot(1-{\hat{p}_0})}{n_1}+\frac{\hat{p}_0\cdot(1-{\hat{p}_0})}{n_2}}}$$
+
+Reemplazando los valores, tendriamos de la siguiente manera:
+
+$$Z = \frac{0.5769231 - 0.2083333}{\sqrt{\frac{0.399\cdot(1-0.399)}{26}+\frac{0.399\cdot(1-0.399)}{24}}} = \frac{0.368}{0.155} = 2.374$$
+
+Para una prueba al nivel de 5%, se tiene que $\alpha=0.05$
+
+Entonces, para una prueba bilateral, se tiene la siguiente toma de decisiones:
+
+Si $Z \ge Z_{\frac{\alpha}{2}}$ o $Z \le -Z_{\frac{\alpha}{2}}$ , entonces se rechazara $H_0$, de lo contrario, se acepta $H_0$
+
+En este caso:
+
+$$Z_{\frac{\alpha}{2}} = 1.96$$
+
+Como en este caso, $2.374 > 1.96$, se rechazara la $H_0$.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Metodo Grafico
+
+```{R}
+
+x_valores = seq(-3, 3, length=1000)
+plot(x_valores, dnorm(x_valores), type="l", ylab="Densidad", xlab="Valores Z", main="Distribución Normal")
+
+valor_Z_0 = 2.374          
+abline(v = valor_Z_0, col = "green", lwd = 2)
+
+
+valor_critico_inf = -1.96  
+abline(v = valor_critico_inf, col = "red", lwd = 2)
+
+
+valor_critico_sup = 1.96  
+abline(v = valor_critico_sup, col = "red", lwd = 2)
+
+legend("topright", legend=c("Z_alpha/2", "Z_0"), 
+       fill=c("red","green"))
+```
+
+Como se observa en la grafica, $Z_0$ cae en la region critica, acotada por $Z_{\frac{\alpha}{2}} = 1.96$. En este caso, se rechaza la $H_0$
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## P-Valor
+
+Para el p-valor, tenemos que:
+
+si $P-valor\le\alpha$, se rechaza $H_0$
+
+Con esto en mente, se tiene lo siguiente:
+
+$$P = 2[1-\phi(Z_0)]$$ $$P = 2[1-\phi(2.374)]$$ $$P = [2-4.748]$$ $$P = -2.748$$
+
+Entonces, como $-2.748 < 0.05$, es decir, $P-Valor < \alpha$, se puede rechazar $H_0$.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Prueba prop.test en R
+
+Ahora, usando el comando integrado en R, podemos hallar la proporcion:
+
+```{r}
+
+N1 <- 26
+X1 <- 15
+
+N2 <-24
+X2 <-5
+```
+
+```{r}
+Z <- prop.test(x= c(X1,X2), n = c(N1,N2), alternative = "two.sided")
+print(Z)
+```
+
+De esta prueba, podemos sacar varias conclusiones:
+
+-   El p-valor tiene un valor de 0.2112
+
+-   Tomando en cuenta el nivel de significancia del 0.05, como el p-valor es menor, se rechaza la hipotesis nula (H0).
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Conclusion
+
+Como conclusion,hay evidencias y hay suficientes pruebas estadisticas para argumentar que las proporciones de mujeres y hombres que tienen mas de 38 años son distintos.
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+# DIFERENCIA DE MEDIAS
+
+En un estudio sobre los gustos politicos de personas adultas con mas de 20 años votando, se extrajo una muestra aleatoria de 19 personas que tienen ideologias conservadoras, y el promedio de los puntajes a sus lideres es en promedio un 56.2, con una desviacion tipica de 6.577. Tambien se extrajo una muestra aleatoria de 16 liberales, donde el promedio de los puntajes a los lideres liberales es de 49.25, con una desviacion tipica de 2.545. Suponiendo que las dos poblaciones son normales y tienen la misma varianza, calcular un intervalo de confianza del 90% para la diferencia de medias.
+
+```{r}
+# Usar tapply para sumar los puntajes por ideología
+suma_por_ideologia <- tapply(datos$Punt_aprob, datos$Ideología, sum)
+
+# Mostrar el resultado
+print(suma_por_ideologia)
+
+#Si de las personas encuestadas, 19 fueron conservadoras:
+cons_prom <- 1069/19
+cat("Puntaje promedio de los conservadores: ", cons_prom ,"\n")
+
+#Si de las personas encuestadas, 16 fueron liberales:
+lib_prom <- 788/16
+cat("Puntaje promedio de los liberales: ", lib_prom, "\n")
+```
+
+Se van a evaluar de las sigiuente manera:
+
+-   Intervalo de Confianza (A mano)
+-   Metodo propio de RStudio
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Intervalo de Confianza
+
+```{r}
+#Tenemos los siguientes datos muestrales:
+
+#Tamaño de la primera poblacion (conservadores)
+n1 <- 19 
+cat("Tamaño de la primera poblacion (conservadores)", n1, "\n")
+
+#Tamaño de segunda poblacion (liberales)
+n2 <- 16 
+cat("Tamaño de la segunda poblacion (liberales)", n2, "\n")
+
+
+#Promedio de la primera poblacion (conservadores)
+x1 <- 56.26
+cat("Promedio de la primera poblacion (conservadores)", x1, "\n")
+
+
+#Promedio de la segunda poblacion (liberales)
+x2 <- 49.25
+cat("Promedio de la segunda poblacion (liberales)", x2, "\n")
+
+
+#Varianza de la primera poblacion (conservadores)
+s1 <- 6.577
+cat("Varianza de la primera poblacion (conservadores)", s1, "\n")
+
+
+#Varianza de la segunda poblacion (liberales)
+s2 <- 2.545
+cat("Varianza de la segunda poblacion (liberales)", s2, "\n")
+
+
+```
+
+Primero, tenemos que encontrar la varianza muestral, y esta tiene la siguiente forma:
+
+$$S^2 = \frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}$$ Donde, al reemplazar terminos, quedaria de la siguiente manera:
+
+$$S^2 = \frac{(19-1)(6.577)^2+(16-1)(2.545)^2}{19+16-2} = \frac{(778.624)+(97.155)}{33} = \frac{875.779}{33}= 26.538$$
+
+Con esto, y usando una tabla para distribucion t de student, encontramos que, para un v = $n_1 + n_2 -2 = 33$, donde 33 son los grados de libertad, y $\frac{\alpha}{2} = t_{0.05} = 1.697$
+
+Con esto, podemos proceder a encontrar el intervalo de confianza, usando la siguiente formula:
+
+$$[(x_1-x_2)-t_{\frac{\alpha}{2}}\sqrt{\frac{s^2}{n_1}+\frac{s^2}{n_2}} < \mu_1 - \mu_2  < (x_1-x_2)+t_{\frac{\alpha}{2}}\sqrt{\frac{s^2}{n_1}+\frac{s^2}{n_2}}$$
+
+De aqui, solo tenemos que reemplazar y tomamos el resultado de la formula:
+
+$$[(56.26-49.25)-1.697\sqrt{\frac{26.538}{19}+\frac{26.538}{16}} < \mu_1 - \mu_2  < (56.26-49.25)+1.697\sqrt{\frac{26.538}{19}+\frac{26.538}{16}}]$$
+
+Esto nos otorga el siguiente intervalo de confianza:
+
+$$ [ 4.045 < \mu_1 - \mu_2 < 9.975 ] $$
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Metodo propio de RStudio
+
+Se tomo el ejemplo establecido en la diapositiva de la profesora Keyla.
+
+```{r}
+# Datos para el grupo de seleccionado
+
+n1 <- 19 # Tamaño de la muestra de conservadores
+x1_bar <- 56.26 # Media de puntajes de conservadores
+s1 <- 6.577 # Desviación típica muestral de conservadores
+# Datos para el grupo de no fumadores
+
+
+n2 <- 16 # Tamaño de la muestra de liberales
+x2_bar <- 49.25 # Media de puntajes de liberales
+s2 <- 2.545 # Desviación típica muestral de liberales
+
+# Nivel de confianza
+conf_level <- 0.90
+
+# Grados de libertad
+df1 <- (n1 - 1)
+df2 <- (n2 - 1)
+
+# Error estándar de la diferencia de medias
+se_diff <- sqrt((s1^2 / n1) + (s2^2 / n2))
+
+# Valor crítico t para un intervalo de confianza del 90%
+t_critical <- qt(1 - (1 - conf_level) / 2, df1 + df2)
+
+# Intervalo de confianzalower_
+lower_limit <- (x1_bar - x2_bar) - t_critical * se_diff
+upper_limit <- (x1_bar - x2_bar) + t_critical * se_diff
+
+# Imprimir el intervalo de confianza
+cat("Intervalo de confianza del 90% para la diferencia entre las dos medias poblacionales:",
+lower_limit, "a", upper_limit)
+
+```
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Conclusion
+
+Con esto en mente, existe evidencia suficiente para que exista una diferencia de medias entre las dos poblaciones de puntajes de politicos.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+# RAZÓN DE VARIANZA
+
+Se tomo como referencia el sueldo en miles de dolares de personas encuestadas. Para una primera muestra aleatoria de 15 personas cuyo nivel mas alto de educacion fue bachiller, la varianza del sueldo es de 140.49 Para una segunda muestra de 10 personas cuyo nivel mas alto de educacion fue la universidad, tienen una varianza del sueldo de 45.02. Al nivel de 5%, determinar si las dos varianzas poblacionales son diferenes. Se asume que ambas tienen una distribucion normal.
+
+Se van a evaluar de las sigiuente manera:
+
+-   Regla de decisiones
+
+-   Prueba en R.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Regla de decisiones
+
+En este caso, siguiendo con $\sigma^2_1$ y $\sigma^2_2$ sus respectivas varianzas poblacionales. Tenemos que establecer primero que todo las hipotesis establecidas:
+
+$H_0$ : $\sigma^2_1$ =$\sigma^2_2$
+
+$H_0$ : $\sigma^2_1 \neq \sigma^2_2$
+
+Con esto en mente, podemos empezar a escribir los datos establecidos:
+
+$n_1=15, s^2_1 = 140.49$ y $n_2=10, s^2_2=45.02$
+
+Con esto, podemos calcular el estadistico de prueba usando la siguiente formula:
+
+$$
+F=\frac{s^2_1}{s^2_2}
+$$
+
+Donde reemplazando es:
+
+$$
+F=\frac{140.49}{45.02} = 3.120
+$$
+
+Para una prueba donde $\alpha$ = 0.05, entonces: $v_1 = n_1-1$ y $v_2 = n_2 -1$
+
+$$
+F_\frac{\alpha}{2} = F_\frac{0.05}{2} = F_{0.025}(v1,v2) = F_{0.025}(14,10) = 3.797952
+$$
+
+```{r}
+# Podemos encontrar el valor de la variable aleatoria reemplazando los valores de alpha, n1 y n2.
+
+z<- qf(1 - 0.025, 14, 9)
+
+z
+
+```
+
+Segun la toma de decisiones, en este caso, si el estadistico de prueba es mayor que el estadistico de la variable aleatoria, se rechazara la hipotesis nula, de caso contrario, se aceptara.
+
+En este caso, tenemos que:
+
+$F = 3.120, F_\frac{\alpha}{2}=3.797$ Como $F < F_\frac{\alpha}{2}$, entonces se aceptara la $H_0$.
+
+Por lo tanto, no hay evidencia para decir que las varianzas de los sueldos son diferentes.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Prueba en R
+
+```{r}
+#Datos
+n1 <- 15
+sl <- 140.49
+n2 <- 10
+s2 <- 45.02
+
+#Nivel de significancia
+ns <- 0.05
+
+#Grados de libertad
+df1 <- n1 -1
+df2 <- n2 -1
+
+#Estadístico de prueba (F)
+estadistico_F <- sl / s2
+
+#Cuantil de la distribución F
+cuantil_F <- qf(1 - ns / 2, df1, df2)
+
+#Prueba de hipótesis
+p_valor <- 2 * pf(estadistico_F, df1, df2, lower.tail = FALSE)
+
+#Imprimir resultados
+cat("Estadístico de prueba (F):", estadistico_F,"\n")
+cat("Cuantil de la distribución F:", cuantil_F, "\n")
+cat("Valor p:", p_valor, "\n")
+
+#Conclusión de la prueba de hipótesis
+if (estadistico_F > cuantil_F) {
+    cat("Conclusión: Rechazamos la hipótesis nula. Hay evidencia significativa para afirmar la hipotesis alternativa")
+} else {
+  cat("Conclusión: No rechazamos la hipótesis nula. No hay suficiente evidencia estadistica para afirmar")
+}
+```
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+## Conclusion
+
+Como conclusion, no hay evidencias y hay suficientes pruebas estadisticas para argumentar que las varianzas de las dos poblaciones son diferentes..
+
+The `echo: false` option disables the printing of code (only output is displayed).
